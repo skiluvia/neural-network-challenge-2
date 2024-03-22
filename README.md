@@ -8,24 +8,47 @@ Firstly, import the data and examine the first five rows to get a sense of its s
 
 
 ## Creating, Compiling, and Training the Model
-To begin, let's first find the number of columns in the X training data.
+To begin, let's first find the number of columns in the X training data. With this information, we can determine the number of neurons to assign to the input layer. I chose to keep 8 columns in the X training data, so the input layer will have 8 neurons. These columns are
 
-Next, we'll proceed to create the input layer. However, it's important to note that we won't be using a sequential model here, as there will be two branched output layers.
+`Age ,  BusinessTravel ,  DistanceFromHome ,  HourlyRate ,  JobSatisfaction ,  PerformanceRating ,  WorkLifeBalance ,  YearsInCurrentRole`
 
-Following this, we'll establish at least two shared layers within the model architecture.
+Reason for this is because we will apply `getdummy` to the `BusinessTravel` column, which will result in 3 columns. The `department` column will also be encoded to 3 columns. Next, we'll proceed to create the input layer. However, it's important to note that we won't be using a `sequential` model here, as there will be two branched output layers. Following this, we'll establish at least two shared layers within the model architecture.
 
+```
+__________________________________________________________________________________________________
+ Layer (type)                Output Shape                 Param #   Connected to                  
+==================================================================================================
+ input_2 (InputLayer)        [(None, 10)]                 0         []                            
+                                                                                                  
+ shared1 (Dense)             (None, 64)                   704       ['input_2[0][0]']             
+                                                                                                  
+ shared2 (Dense)             (None, 128)                  8320      ['shared1[0][0]']             
+                                                                                                  
+ department_hidden (Dense)   (None, 32)                   4128      ['shared2[0][0]']             
+                                                                                                  
+ attrition_hidden (Dense)    (None, 32)                   4128      ['shared2[0][0]']             
+                                                                                                  
+ department_output (Dense)   (None, 3)                    99        ['department_hidden[0][0]']   
+                                                                                                  
+ attrition_output (Dense)    (None, 2)                    66        ['attrition_hidden[0][0]']    
+                                                                                                  
+==================================================================================================
+Total params: 17445 (68.14 KB)
+Trainable params: 17445 (68.14 KB)
+Non-trainable params: 0 (0.00 Byte)
+__________________________________________________________________________________________________
+```
 Subsequently, we'll construct a branch specifically tailored to predict the department target column. This branch will consist of one hidden layer and one output layer.
-
 Similarly, we'll create another branch to predict the attrition target column. Like the previous branch, this will also include one hidden layer and one output layer.
+Once the architecture is defined, we'll proceed to create the model. With the model structure established, the next step is to compile it. After compiling, we'll summarize the model to provide an overview of its architecture and parameters. Moving forward, we'll train the model using the preprocessed data. Following the training phase, we'll evaluate the model's performance with the testing data. Finally, we'll print the accuracy scores for both the department and attrition predictions.
 
-Once the architecture is defined, we'll proceed to create the model.
 
-With the model structure established, the next step is to compile it.
+## Summary
 
-After compiling, we'll summarize the model to provide an overview of its architecture and parameters.
+I think **accuracy** can be used in this model to evaluate the model's performance. The model has an accuracy of 0.80 for the department prediction and 0.51 for the attrition prediction. This means that the model is able to predict the department of an employee with 83% accuracy and whether an employee will leave the company with 85% accuracy. This is a good result, but there is still room for improvement. The model can be further optimized by tuning the hyperparameters, increasing the number of epochs, or adding more layers to the neural network. Additionally, more data can be collected to improve the model's performance. Overall, the model is a good starting point for HR to predict employee attrition and department fit.
 
-Moving forward, we'll train the model using the preprocessed data.
+This type of accuracy may not be very reliable if there were cost sensitive issues. For example, if the cost of false positives is high, then the model may not be very useful. In this case, the model may need to be further optimized to reduce the number of false positives. However, if the cost of false negatives is high, then the model may be useful as is. It is important to consider the cost of false positives and false negatives when evaluating the model's performance. While predicting attrition for any company is important, but cannot be compared with outcome of for example bad fraud detection or healthcare issues.
 
-Following the training phase, we'll evaluate the model's performance with the testing data.
+I chose `relu` for shared layer because it is a good activation function for hidden layers in neural networks. It is able to handle the vanishing gradient problem, which can occur when training deep neural networks. I chose `sigmoid` for the attrition output layer because it is a good activation function for binary classification problems. It squashes the output to a range between 0 and 1, which is useful for predicting probabilities. I chose `softmax` for the department output layer because it is a good activation function for multi-class classification problems. It squashes the output to a range between 0 and 1, which is useful for predicting probabilities. Additionally, it ensures that the sum of the output values is equal to 1, which is useful for interpreting the results.
 
-Finally, we'll print the accuracy scores for both the department and attrition predictions.
+A model might be improved by increasing the number of epochs, adding more layers to the neural network, or tuning the hyperparameters. Additionally, more data can be collected to improve the model's performance. Overall, the model is a good starting point for HR to predict employee attrition and department fit. Also by chossing different data column to understand which data column might be produce most accurate results.
